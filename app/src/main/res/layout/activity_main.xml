@@ -4,6 +4,10 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:weightSum="1">
+    <net.ossrs.yasea.SrsCameraView
+        android:layout_width="match_parent"
+        android:layout_height="100px"
+        android:id="@+id/preview"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
