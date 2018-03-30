@@ -1,9 +1,8 @@
 package com.denis.homemapbuilder.service;
 
 import android.app.Activity;
-import android.app.Application;
 
-import com.denis.homemapbuilder.activity.MainActivity;
+import com.denis.homemapbuilder.component.CommandMessage2UartCommandConverter;
 import com.denis.homemapbuilder.service.impl.MovementServiceImpl;
 import com.denis.homemapbuilder.service.impl.UsbUartServiceImpl;
 import com.denis.homemapbuilder.service.impl.WebSocketServiceImpl;
@@ -23,8 +22,15 @@ public class ServiceModule {
 
     @Provides
     @Singleton
-    MovementService provideMovementService(UsbUartService usbUartService) {
-        return new MovementServiceImpl(usbUartService);
+    CommandMessage2UartCommandConverter provideCommandMessage2UartCommandConverter() {
+        return new CommandMessage2UartCommandConverter();
+    }
+
+    @Provides
+    @Singleton
+    MovementService provideMovementService(UsbUartService usbUartService,
+                                           CommandMessage2UartCommandConverter commandMessage2UartCommandConverter) {
+        return new MovementServiceImpl(usbUartService, commandMessage2UartCommandConverter);
     }
 
     @Provides

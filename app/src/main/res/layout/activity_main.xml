@@ -23,7 +23,6 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="number"
         android:ems="10"
         android:id="@+id/editText" android:layout_weight="0.09"/>
     <Button

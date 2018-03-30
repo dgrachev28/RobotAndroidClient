@@ -1,25 +1,23 @@
 package com.denis.homemapbuilder.service.impl;
 
 
-import android.content.Context;
-import android.hardware.usb.UsbManager;
 import android.util.Log;
 
+import com.denis.homemapbuilder.model.CommandMessage;
 import com.denis.homemapbuilder.service.MovementService;
 import com.denis.homemapbuilder.service.WebSocketService;
+import com.google.gson.Gson;
 import com.koushikdutta.async.ByteBufferList;
 import com.koushikdutta.async.DataEmitter;
 import com.koushikdutta.async.callback.DataCallback;
 import com.koushikdutta.async.http.AsyncHttpClient;
 import com.koushikdutta.async.http.WebSocket;
 
-import javax.inject.Inject;
-
 public class WebSocketServiceImpl implements WebSocketService {
 
     private final String CLASS_TAG = WebSocketServiceImpl.class.getName();
 
-    private MovementService movementService;
+    private final MovementService movementService;
 
     public WebSocketServiceImpl(MovementService movementService) {
         this.movementService = movementService;
@@ -27,7 +25,7 @@ public class WebSocketServiceImpl implements WebSocketService {
     }
 
     private void initWebSocket() {
-        final String url = "ws://192.168.1.154:8080/websocket";
+        final String url = "ws://192.168.0.11:8080/websocket";
         AsyncHttpClient.getDefaultInstance().websocket(url, "ws", new AsyncHttpClient.WebSocketConnectCallback() {
             @Override
             public void onCompleted(Exception ex, WebSocket webSocket) {
@@ -40,12 +38,9 @@ public class WebSocketServiceImpl implements WebSocketService {
 //                webSocket.send(new byte[10]);
                 webSocket.setStringCallback(new WebSocket.StringCallback() {
                     public void onStringAvailable(String s) {
-                        byte b = (byte) Integer.parseInt(s);
-                        if (movementService instanceof MovementServiceImpl) {
-                            ((MovementServiceImpl) movementService).publicSendMessage(b);
-                        } else {
-                            throw new RuntimeException("movementService неверного типа");
-                        }
+                        Gson gson = new Gson();
+                        CommandMessage commandMessage = gson.fromJson(s, CommandMessage.class);
+                        movementService.sendMessage(commandMessage);
                     }
                 });
                 webSocket.setDataCallback(new DataCallback() {

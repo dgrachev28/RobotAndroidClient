@@ -11,6 +11,7 @@ import com.denis.homemapbuilder.DaggerAppComponent;
 import com.denis.homemapbuilder.R;
 import com.denis.homemapbuilder.service.MovementService;
 import com.denis.homemapbuilder.service.ServiceModule;
+import com.denis.homemapbuilder.service.WebSocketService;
 import com.denis.homemapbuilder.service.impl.MovementServiceImpl;
 
 import javax.inject.Inject;
@@ -26,7 +27,12 @@ public class MainActivity extends Activity {
     @Inject
     MovementService movementService;
 
+    @Inject
+    WebSocketService webSocketService;
+
     public RtmpCameraAPI rtmpCameraAPI;
+
+    private TextView textView;
 
     private void init() {
         AppComponent appComponent = DaggerAppComponent.builder().serviceModule(new ServiceModule(this)).build();
@@ -42,29 +48,29 @@ public class MainActivity extends Activity {
         init();
         setContentView(R.layout.activity_main);
 
-        TextView textView = (TextView) findViewById(R.id.editText);
-        configButton(textView);
+        TextView editText = (TextView) findViewById(R.id.editText);
+        textView = (TextView) findViewById(R.id.textView);
+        configButton(editText);
 
         SrsCameraView srsCameraView = (SrsCameraView) findViewById(R.id.preview);
         rtmpCameraAPI = new RtmpCameraAPIImpl(srsCameraView, getSharedPreferences("Yasea", MODE_PRIVATE));
     }
 
-    private void configButton(final TextView textView) {
+    private void configButton(final TextView editText) {
         Button button = (Button) findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                rtmpCameraAPI.startRecord("rtmp://192.168.1.154:1935/myapp/mystream");
-                if (!textView.getText().toString().equals("")) {
-                    byte b = (byte) Integer.parseInt(textView.getText().toString());
-                    if (movementService instanceof MovementServiceImpl) {
-                        ((MovementServiceImpl) movementService).publicSendMessage(b);
-                    } else {
-                        throw new RuntimeException("movementService неверного типа");
-                    }
+//                rtmpCameraAPI.startRecord("rtmp://192.168.0.11:1935/myapp/mystream");
+                if (!editText.getText().toString().equals("")) {
+                    movementService.sendMessage(editText.getText().toString());
                 }
             }
         });
+    }
+
+    public void setTextViewText(String text) {
+        textView.setText(text);
     }
 
 }

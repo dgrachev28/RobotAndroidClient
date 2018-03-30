@@ -1,16 +1,10 @@
 package com.denis.homemapbuilder.service;
 
-import com.denis.homemapbuilder.model.EngineType;
+import com.denis.homemapbuilder.model.CommandMessage;
 
 public interface MovementService {
 
-    void startEngine(int speed, EngineType engineType);
-    void stopEngine(EngineType engineType);
+    void sendMessage(CommandMessage commandMessage);
 
-    void moveForward(int speed);
-    void moveBackward(int speed);
-
-    void turnAroundLeft(int speed);
-    void turnAroundRight(int speed);
-
+    void sendMessage(String message);
 }
